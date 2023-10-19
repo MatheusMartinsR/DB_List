@@ -1,0 +1,91 @@
+--1) Crie uma procedure para inserir um novo funcionário:--
+create or replace procedure insere_novo_funcionario(
+p_id number,
+p_first_name number,
+p_last_name varchar2,
+p_email varchar2,
+p_phone_number varchar2,
+p_hire_date date,
+p_job_id varchar2,
+p_salary number,
+p_manager_id number,
+p_department_id number)
+as 
+begin 
+insert into funcionario(employee_id, first_name, last_name, email, phone_number, hire_date,
+job_id, salary, manager_id, department_id) values 
+(p_id, p_first_name, p_last_name, p_email, p_phone_number, p_hire_date, p_job_id, p_salary,
+p_manager_id, p_department_id);
+commit;
+end;
+
+--2) Crie uma função para calcular o salário anual de um funcionário:
+create or replace function cal_salario_anual(p_id number) return number as salario_anual number;
+begin
+select salary * 12 into salario_anual from funcionario where employee_id = p_id;
+return salario_anual;
+end;
+
+--3) Crie uma procedure para atualizar o salário de um funcionário com base no aumento percentual:
+create or replace procedure atualiza_salario(
+p_id number, 
+p_aumento_percentual number)
+as 
+begin
+update funcionario 
+set salary = salary * (1 + (p_aumento_percentual / 100)) 
+where employee_id = p_id;
+commit;
+end;
+
+
+--4) Crie uma procedure para excluir um funcionário por ID:
+create or replace procedure exclui_funcionario(
+p_id number)
+as 
+begin
+delete from funcionario where employee_id = p_id;
+commit;
+end;
+
+--5. Crie uma função para retornar o nome completo de um funcionário por ID:
+create or replace function retorna_nome_completo(p_id number) return varchar2 as nome_completo varchar2(100);
+begin
+select first_name | | last_name into nome_completo from funcionario where employee_id = p_id;
+return nome_completo;
+commit;
+end;
+
+---6. Crie uma procedure para conceder aumento a todos os funcionários de um departamento:
+create or replace procedure aumento_funcionario_departamento(
+p_department_id number,
+p_id number,
+p_aumento_percentual number)
+as 
+begin
+update funcionario
+set salary = salary * (1 + (p_aumento_percentual / 100))
+where employee_id = p_id;
+commit;
+end;
+
+--7. Crie uma função para contar o número de funcionários em um departamento:
+create or replace function conta_n_funcionarios(p_department_id number) return number as total_funcionario number;
+begin
+select count(*) into total_funcionario from funcionario where department_id = p_department_id;
+return total_funcionario;
+end;
+
+--8. Crie uma procedure para atribuir um funcionário a um novo departamento com base no cargo:
+
+create or replace procedure atribui_funcionario(
+p_department_id number,
+p_job_id number)
+as 
+begin
+update funcionario
+set department_id = p_department_id
+where job_id = p_job_id;
+commit;
+end;
+
